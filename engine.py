@@ -56,6 +56,14 @@ class Query():
 			elif "FROM" in self.parse[i]:
 				self.tables.append(self.parse[i].split()[1])
 
+	def execute(self):
+		for tab in self.tables:
+			for col in self.columns:
+				if col == "*":
+					print([list(x.values()) for x in db.tables[tab].rows])
+				else:
+					print([x[col] for x in db.tables[tab].rows])
+
 if __name__ == '__main__':
 	table1 = Table("table1")
 	table1.load_table('./files/table1.csv', './files/metadata.txt')
@@ -67,12 +75,6 @@ if __name__ == '__main__':
 	db.tables["table1"] = table1
 	db.tables["table2"] = table2
 
-	qry = Query("Select A, B, C from table1, table2")
+	qry = Query("Select A, B, C from table1")
 	qry.query_processing()
-
-	for tab in qry.tables:
-		for col in qry.columns:
-			if col == "*":
-				print([list(x.values()) for x in db.tables[tab].rows])
-			else:
-				print([x[col] for x in db.tables[tab].rows])
+	qry.execute()	
