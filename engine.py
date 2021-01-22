@@ -5,6 +5,16 @@ class Database():
 	def __init__(self):
 		self.tables = {}
 
+	def load_database(self, meta_file):
+		table1 = Table("table1")
+		table1.load_table('./files/table1.csv', meta_file)
+
+		table2 = Table("table2")
+		table2.load_table('./files/table2.csv', meta_file)
+
+		db.tables["table1"] = table1
+		db.tables["table2"] = table2
+
 class Table():
 	def __init__(self, name):
 		self.name = name
@@ -65,16 +75,9 @@ class Query():
 					print([x[col] for x in db.tables[tab].rows])
 
 if __name__ == '__main__':
-	table1 = Table("table1")
-	table1.load_table('./files/table1.csv', './files/metadata.txt')
-
-	table2 = Table("table2")
-	table2.load_table('./files/table2.csv', './files/metadata.txt')
-
 	db = Database()
-	db.tables["table1"] = table1
-	db.tables["table2"] = table2
+	db.load_database("./files/metadata.txt")
 
-	qry = Query("Select A, B, C from table1")
+	qry = Query("Select D,E from table2")
 	qry.query_processing()
 	qry.execute()	
