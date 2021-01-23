@@ -71,6 +71,22 @@ class Query():
 			for col in self.columns:
 				if col == "*":
 					print([list(x.values()) for x in db.tables[tab].rows])
+				elif "max" in col:
+					temp = col.replace("max(", "").replace(")", "")
+					print(max([x[temp] for x in db.tables[tab].rows]))
+				elif "sum" in col:
+					temp = col.replace("sum(", "").replace(")", "")
+					print(sum([x[temp] for x in db.tables[tab].rows]))
+				elif "avg" in col:
+					temp = col.replace("avg(", "").replace(")", "")
+					print(sum([x[temp] for x in db.tables[tab].rows]) / 
+							len([x[temp] for x in db.tables[tab].rows]))
+				elif "min" in col:
+					temp = col.replace("min(", "").replace(")", "")
+					print(min([x[temp] for x in db.tables[tab].rows]))
+				elif "count" in col:
+					temp = col.replace("count(", "").replace(")", "")
+					print(len([x[temp] for x in db.tables[tab].rows]))
 				else:
 					print([x[col] for x in db.tables[tab].rows])
 
@@ -78,6 +94,6 @@ if __name__ == '__main__':
 	db = Database()
 	db.load_database("./files/metadata.txt")
 
-	qry = Query("Select D,E from table2")
+	qry = Query("Select sum(D), avg(D), max(D), min(D), count(D) from table2")
 	qry.query_processing()
 	qry.execute()	
