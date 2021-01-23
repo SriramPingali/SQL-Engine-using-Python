@@ -1,4 +1,5 @@
 import csv
+import sys
 import sqlparse
 
 class Database():
@@ -94,6 +95,7 @@ if __name__ == '__main__':
 	db = Database()
 	db.load_database("./files/metadata.txt")
 
-	qry = Query("Select sum(D), avg(D), max(D), min(D), count(D) from table2")
+	quer = sys.argv[1]
+	qry = Query(str(quer))
 	qry.query_processing()
 	qry.execute()	
