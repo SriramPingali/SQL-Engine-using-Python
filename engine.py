@@ -7,14 +7,24 @@ class Database():
 		self.tables = {}
 
 	def load_database(self, meta_file):
-		table1 = Table("table1")
-		table1.load_table('./files/table1.csv', meta_file)
+		tab=[]
+		me=open(meta_file,'r')
+		line=me.readlines()
+		for i in range(0,len(line)):
+			if line[i].strip('\n')=='<begin_table>':
+				tab.append(line[i+1].strip('\n'))
+		
+		for i in range (0,len(tab)):
+	
+			temptable  = Table(tab[i])
+			path = './'+tab[i]+".csv"
 
-		table2 = Table("table2")
-		table2.load_table('./files/table2.csv', meta_file)
+			temptable.load_table( path,meta_file)
+			db.tables[tab[i]] = temptable	
 
-		db.tables["table1"] = table1
-		db.tables["table2"] = table2
+		
+			
+
 
 class Table():
 	def __init__(self, name):
@@ -55,6 +65,7 @@ class Query():
 
 	def query_processing(self):
 		self.parse = sqlparse.format(self.query_str, reindent=True, keyword_case='upper').split('\n')
+	#	print(self.parse[0].split()[1])
 		for i in range(len(self.parse)):
 			if "SELECT" in self.parse[i]:
 				if "," in self.parse[i]:
@@ -66,6 +77,7 @@ class Query():
 					self.columns.append(self.parse[i].split()[1])
 			elif "FROM" in self.parse[i]:
 				self.tables.append(self.parse[i].split()[1])
+				
 
 	def execute(self):
 		for tab in self.tables:
@@ -93,9 +105,17 @@ class Query():
 
 if __name__ == '__main__':
 	db = Database()
-	db.load_database("./files/metadata.txt")
-
+	db.load_database("./metadata.txt")
+	
 	quer = sys.argv[1]
-	qry = Query(str(quer))
+	quer=str(quer)
+	if quer[-1]!=';':
+		raise Exception("error")
+		
+	else :
+		quer=quer.replace(";","")
+		
+	
+	qry = Query(quer)
 	qry.query_processing()
 	qry.execute()	
